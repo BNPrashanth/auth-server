@@ -3,6 +3,7 @@ package services
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/BNPrashanth/auth-server/internal/logger"
@@ -59,4 +60,30 @@ func HandleSignin(w http.ResponseWriter, r *http.Request) {
 		Expiresin: expirationTime.String(),
 	}
 	json.NewEncoder(w).Encode(data)
+}
+
+// HandleWelcome Function
+func HandleWelcome(w http.ResponseWriter, r *http.Request) {
+	accessToken := r.Header.Get("Authorization")
+	tknStr := strings.Split(accessToken, " ")[1]
+	logger.Log.Info(tknStr)
+
+	claims := &models.Claims{}
+	tkn, err := jwt.ParseWithClaims(tknStr, claims, func(token *jwt.Token) (interface{}, error) {
+		return jwtKey, nil
+	})
+	if !tkn.Valid {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	if err != nil {
+		if err == jwt.ErrSignatureInvalid {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	logger.Log.Info("Welcome " + claims.Username + "!")
+	json.NewEncoder(w).Encode(claims)
 }

@@ -23,6 +23,7 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 // Welcome Function
 func Welcome(w http.ResponseWriter, r *http.Request) {
 	logger.Log.Info("Welcome called..")
+	HandleWelcome(w, r)
 }
 
 // Refresh Function
