@@ -17,6 +17,7 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 // Signin Function
 func Signin(w http.ResponseWriter, r *http.Request) {
 	logger.Log.Info("Signin called..")
+	HandleSignin(w, r)
 }
 
 // Welcome Function
